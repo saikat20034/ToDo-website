@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>To-Do List with Set Date</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #8EC5FC, #E0C3FC);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 50px;
+      margin: 0;
+    }
+
+    .todo-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .input-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    input[type="text"], input[type="date"] {
+      flex: 1 1 45%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #6a11cb;
+      color: white;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      flex: 1 1 100%;
+    }
+
+    button:hover {
+      background: #5b0eb2;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background: #fdfdfd;
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .task-date {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #e74c3c;
+      border: none;
+      padding: 5px 10px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #666;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="todo-container">
+    <h1>📅 My To-Do List with Dates</h1>
+    <div class="input-section">
+      <input type="text" id="todo-input" placeholder="Enter your task..." />
+      <input type="date" id="todo-date" />
+      <button onclick="addTodo()">Add Task</button>
+    </div>
+    <ul id="todo-list"></ul>
+    <p id="empty" class="empty-message">Your list is empty!</p>
+  </div>
+
+  <script>
+    const input = document.getElementById('todo-input');
+    const dateInput = document.getElementById('todo-date');
+    const list = document.getElementById('todo-list');
+    const emptyMessage = document.getElementById('empty');
+
+    function addTodo() {
+      const task = input.value.trim();
+      const date = dateInput.value;
+
+      if (task === '' || date === '') {
+        alert('Please enter both task and date.');
+        return;
+      }
+
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="task-text">${task}</span>
+        <span class="task-date">Scheduled for: ${new Date(date).toDateString()}</span>
+        <button class="delete-btn" onclick="deleteTodo(this)">Delete</button>
+      `;
+      list.appendChild(li);
+      input.value = '';
+      dateInput.value = '';
+      updateEmptyMessage();
+    }
+
+    function deleteTodo(button) {
+      const li = button.parentElement;
+      list.removeChild(li);
+      updateEmptyMessage();
+    }
+
+    function updateEmptyMessage() {
+      emptyMessage.style.display = list.children.length === 0 ? 'block' : 'none';
+    }
+
+    input.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        addTodo();
+      }
+    });
+
+    updateEmptyMessage();
+  </script>
+</body>
+</html>
