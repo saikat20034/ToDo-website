@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>To-Do List with Set Date</title>
+  <title>To-Do List with Update</title>
   <style>
     * {
       box-sizing: border-box;
@@ -95,10 +95,13 @@
       color: #555;
     }
 
-    .delete-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .delete-btn, .edit-btn, .save-btn {
       background: #e74c3c;
       border: none;
       padding: 5px 10px;
@@ -108,20 +111,33 @@
       font-size: 13px;
     }
 
-    .delete-btn:hover {
-      background: #c0392b;
+    .edit-btn {
+      background: #f39c12;
     }
+
+    .save-btn {
+      background: #2ecc71;
+    }
+
+    .delete-btn:hover { background: #c0392b; }
+    .edit-btn:hover { background: #d35400; }
+    .save-btn:hover { background: #27ae60; }
 
     .empty-message {
       text-align: center;
       color: #666;
       margin-top: 30px;
     }
+
+    .task-inputs input {
+      margin-top: 5px;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
   <div class="todo-container">
-    <h1>📅 My To-Do List with Dates</h1>
+    <h1>📝 To-Do List (With Update)</h1>
     <div class="input-section">
       <input type="text" id="todo-input" placeholder="Enter your task..." />
       <input type="date" id="todo-date" />
@@ -150,7 +166,10 @@
       li.innerHTML = `
         <span class="task-text">${task}</span>
         <span class="task-date">Scheduled for: ${new Date(date).toDateString()}</span>
-        <button class="delete-btn" onclick="deleteTodo(this)">Delete</button>
+        <div class="btn-group">
+          <button class="edit-btn" onclick="editTodo(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteTodo(this)">Delete</button>
+        </div>
       `;
       list.appendChild(li);
       input.value = '';
@@ -159,9 +178,47 @@
     }
 
     function deleteTodo(button) {
-      const li = button.parentElement;
+      const li = button.closest('li');
       list.removeChild(li);
       updateEmptyMessage();
+    }
+
+    function editTodo(button) {
+      const li = button.closest('li');
+      const text = li.querySelector('.task-text').textContent;
+      const dateText = li.querySelector('.task-date').textContent;
+      const oldDate = new Date(dateText.replace('Scheduled for: ', ''));
+
+      li.innerHTML = `
+        <div class="task-inputs">
+          <input type="text" value="${text}" class="edit-text" />
+          <input type="date" value="${oldDate.toISOString().split('T')[0]}" class="edit-date" />
+        </div>
+        <div class="btn-group">
+          <button class="save-btn" onclick="saveTodo(this)">Save</button>
+          <button class="delete-btn" onclick="deleteTodo(this)">Delete</button>
+        </div>
+      `;
+    }
+
+    function saveTodo(button) {
+      const li = button.closest('li');
+      const newText = li.querySelector('.edit-text').value.trim();
+      const newDate = li.querySelector('.edit-date').value;
+
+      if (newText === '' || newDate === '') {
+        alert('Please provide both updated task and date.');
+        return;
+      }
+
+      li.innerHTML = `
+        <span class="task-text">${newText}</span>
+        <span class="task-date">Scheduled for: ${new Date(newDate).toDateString()}</span>
+        <div class="btn-group">
+          <button class="edit-btn" onclick="editTodo(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteTodo(this)">Delete</button>
+        </div>
+      `;
     }
 
     function updateEmptyMessage() {
